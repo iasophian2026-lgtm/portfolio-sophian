@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sophian Abdessadok — Designer Produit · UX</title>
+<meta name="description" content="Portfolio de Sophian Abdessadok — Designer Produit industriel et UX, Lyon, +15 ans d'expérience.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo:wght@500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700&family=Spline+Sans:wght@400;500;600&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <header class="topbar">
+    <div class="tb-zone tb-left">
+      <span class="p-role">Designer Produit · UX</span>
+      <span class="p-loc">Lyon · +15 ans</span>
+      <div class="p-contact">
+        <a href="mailto:sophian.designer@gmail.com">Contact</a>
+        <a href="https://www.abdessadok.com" target="_blank" rel="noopener">Portfolio</a>
+      </div>
+    </div>
+    <div class="logo" aria-label="Logo">
+      <image-slot class="logo-img" id="logo_mark" shape="rounded" radius="6" fit="contain" placeholder="Logo"></image-slot>
+    </div>
+    <div class="tb-zone tb-right"></div>
+  </header>
+
+  <div class="shell">
+    <nav class="rail" id="rail"></nav>
+    <main class="stage" id="stage"></main>
+    <div class="hud" id="hud"></div>
+  </div>
+
+</div>
+
+<script src="assets/image-slot.js"></script>
+<script src="assets/data.js"></script>
+<script src="assets/engine.js"></script>
+</body>
+</html>

@@ -1,0 +1,415 @@
+/* ============================================================
+   Portfolio — Sophian Abdessadok
+   ============================================================ */
+
+:root{
+  --paper:#F3F1EA;
+  --paper-2:#ECE9DF;
+  --ink:#1A1916;
+  --muted:#6E6A5E;
+  --line:#1A1916;
+  --line-soft:#C9C4B4;
+  --accent:#C8552C;
+  --title-font:'Space Grotesk', sans-serif;
+  --drift:36;
+  --density:1;
+  --hand:'Caveat', cursive;
+  --ui:'Spline Sans', system-ui, sans-serif;
+  --topbar-h:112px;
+
+  --fx-base:#100f0c;
+  --fx-perspective:780px;
+  --fx-tilt:11;
+  --fx-lift:1.045;
+  --fx-radius:11px;
+  --fx-mono:1;
+  --fx-contrast:1.08;
+  --fx-bright:0.96;
+  --fx-glow:0.55;
+  --fx-glow-size:46%;
+  --fx-irid:0.5;
+  --fx-irid-sat:75%;
+  --fx-noise:0.14;
+  --fx-noise-img:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='170' height='170'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; height:100%; }
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--ui);
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  overflow:hidden;
+}
+.app{ height:100vh; display:flex; flex-direction:column; position:relative; }
+
+/* faint paper grid */
+.app::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
+  background-image:linear-gradient(var(--line-soft) 1px,transparent 1px),
+                   linear-gradient(90deg,var(--line-soft) 1px,transparent 1px);
+  background-size:32px 32px; opacity:.16;
+}
+
+/* ---------- bandeau fixe transparent, logo centré ---------- */
+.topbar{
+  position:fixed; top:0; left:0; right:0; z-index:40;
+  display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:16px;
+  padding:12px 26px; background:transparent;
+}
+.topbar::before{
+  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none;
+  background:linear-gradient(180deg, var(--paper) 30%, rgba(243,241,234,0) 100%);
+}
+.logo{ display:flex; align-items:center; gap:12px; justify-self:center; }
+.logo-img{ width:340px; height:88px; }
+.logo-img::part(frame){ background:transparent; }
+.logo-img::part(ring){ display:none; }
+
+.tb-zone{ display:flex; min-width:0; }
+.tb-left{ flex-direction:column; align-items:flex-start; gap:4px; }
+.tb-right{ flex-direction:row; align-items:center; justify-content:flex-end; gap:16px; }
+.p-role{ font-family:var(--title-font); font-weight:600; font-size:12.5px; color:var(--ink); white-space:nowrap; }
+.p-loc{ color:var(--muted); font-size:10px; letter-spacing:.16em; text-transform:uppercase; white-space:nowrap; }
+.p-contact{ display:flex; gap:14px; margin-top:1px; white-space:nowrap; }
+.p-contact a{
+  color:var(--ink); text-decoration:none; font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+  border-bottom:1.4px solid var(--accent); padding-bottom:1px; transition:color .14s;
+}
+.p-contact a:hover{ color:var(--accent); }
+
+/* ---------- stage shell ---------- */
+.shell{ position:relative; z-index:10; flex:1; min-height:0; display:flex; padding-top:var(--topbar-h); }
+
+.rail{ display:none; }
+.rail-item{ all:unset; }
+
+.stage{ position:relative; flex:1; min-height:0; }
+
+/* ---------- métier section ---------- */
+.metier{ position:relative; }
+.metier-num{
+  font-family:var(--title-font); font-weight:700; color:var(--accent);
+  font-size:13px; letter-spacing:.2em;
+}
+.metier-title{
+  font-family:var(--title-font); font-weight:600; letter-spacing:-.02em;
+  margin:0; line-height:1.0;
+}
+.metier-tagline{ font-family:var(--hand); color:var(--ink); margin:0; line-height:1.05; }
+.metier-body{ color:var(--muted); margin:0; max-width:54ch; line-height:1.5; }
+.metier-meta{ display:flex; flex-wrap:wrap; gap:7px; margin:0; padding:0; list-style:none; }
+.metier-meta li{
+  font-size:11px; letter-spacing:.04em; color:var(--ink);
+  border:1.4px solid var(--line); border-radius:999px; padding:4px 11px; background:var(--paper);
+}
+
+/* ---------- marquee strip ---------- */
+.marquee{ position:relative; overflow:hidden; }
+.marquee::after{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(90deg,var(--paper),transparent 7%,transparent 93%,var(--paper));
+}
+.track{
+  display:flex; gap:18px; align-items:center;
+  overflow-x:auto; overflow-y:hidden; scrollbar-width:none;
+  padding:34px 26px 44px; cursor:grab; height:100%;
+}
+.track::-webkit-scrollbar{ display:none; }
+.track.dragging{ cursor:grabbing; scroll-behavior:auto; }
+
+.card{
+  flex:0 0 auto; display:flex; flex-direction:column; gap:11px;
+  width:clamp(190px,21vw,300px);
+  background:transparent; border:0; padding:0; text-align:left; cursor:pointer;
+  font-family:inherit; color:inherit;
+  perspective:var(--fx-perspective);
+}
+.card3d{
+  position:relative; border-radius:var(--fx-radius);
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) rotateZ(var(--rz,0deg)) translate(var(--tx,0),var(--ty,0)) scale(var(--c-scale,1));
+  transform-style:preserve-3d; transition:transform .35s cubic-bezier(.2,.8,.2,1);
+  will-change:transform;
+}
+.card.fx-on .card3d{ --c-scale:var(--fx-lift); transition:transform .08s ease-out; }
+
+/* accent sobre par métier */
+.metier[data-metier="produit"]{ --accent:#E0701A; }
+.metier[data-metier="ux"]    { --accent:#2C5C9E; }
+.metier[data-metier="com"]   { --accent:#B23A2C; }
+.metier[data-metier="photo"] { --accent:#1A1916; }
+
+/* fond réactif désactivé */
+.metier-info, .marquee, .metier-detail{ position:relative; z-index:1; }
+.metier-bg{ display:none; }
+
+/* card plate monochrome */
+.card .thumb-wrap{
+  position:relative; isolation:isolate; overflow:hidden;
+  border-radius:var(--fx-radius); background:var(--fx-base);
+  box-shadow:0 5px 13px rgba(10,9,7,.10), inset 0 0 0 1px rgba(255,255,255,.04);
+  transition:box-shadow .35s;
+  -webkit-backface-visibility:hidden; backface-visibility:hidden;
+}
+/* face arrière de la miniature : croix de fermeture */
+.card-x{
+  position:absolute; inset:0; z-index:2; border-radius:var(--fx-radius);
+  transform:rotateY(180deg); -webkit-backface-visibility:hidden; backface-visibility:hidden;
+  display:grid; place-items:center; background:#fff;
+  box-shadow:0 5px 13px rgba(10,9,7,.10); border:1px solid rgba(26,25,22,.10);
+}
+.card-x svg{
+  box-sizing:border-box; width:52px; height:52px; aspect-ratio:1; padding:9px;
+  background:transparent; border:2px solid var(--accent); border-radius:50%; color:var(--accent);
+}
+.card-x svg path{ transform:scale(1.35); transform-origin:center; transform-box:fill-box; }
+.card.fx-on .thumb-wrap{ box-shadow:0 13px 27px rgba(10,9,7,.20), inset 0 0 0 1px rgba(255,255,255,.10); }
+.card.is-focus .thumb-wrap{ outline:2px solid var(--accent); outline-offset:3px; }
+.card image-slot{
+  display:block; width:100%; height:100%;
+  filter:grayscale(var(--fx-mono)) contrast(var(--fx-contrast)) brightness(var(--fx-bright));
+}
+
+/* calques d'effet */
+.fx{ position:absolute; inset:0; pointer-events:none; border-radius:inherit; }
+.fx-glow{
+  background:radial-gradient(circle at var(--mx,50%) var(--my,50%),
+    rgba(255,255,255,var(--fx-glow)) 0%, rgba(255,255,255,0) var(--fx-glow-size));
+  mix-blend-mode:screen; opacity:0; transition:opacity .3s; z-index:3;
+}
+.fx-irid{
+  background:conic-gradient(from var(--irid-shift,0deg) at var(--mx,50%) var(--my,50%),
+    hsl(0,var(--fx-irid-sat),58%), hsl(55,var(--fx-irid-sat),58%), hsl(120,var(--fx-irid-sat),58%),
+    hsl(185,var(--fx-irid-sat),58%), hsl(250,var(--fx-irid-sat),58%), hsl(310,var(--fx-irid-sat),58%),
+    hsl(360,var(--fx-irid-sat),58%));
+  mix-blend-mode:color-dodge; filter:blur(6px) saturate(1.2);
+  opacity:0; transition:opacity .3s; z-index:2;
+}
+.fx-noise{
+  background-image:var(--fx-noise-img); background-size:170px 170px;
+  mix-blend-mode:overlay; opacity:var(--fx-noise); z-index:1;
+}
+.card.fx-on .fx-glow{ opacity:1; }
+.card.fx-on .fx-irid{ opacity:var(--fx-irid); }
+.card .cap{ display:flex; flex-direction:column; gap:2px; }
+.card .cap b{ font-family:var(--title-font); font-weight:600; font-size:14px; letter-spacing:-.01em; }
+.card .cap span{ color:var(--muted); font-size:11.5px; line-height:1.3; }
+.card .idx{ font-family:var(--hand); color:var(--accent); font-size:15px; }
+
+image-slot{ --is-bg:var(--paper-2); }
+
+/* ---------- HUD (navigation verticale) ---------- */
+.hud{
+  position:absolute; right:18px; top:50%; transform:translateY(-50%);
+  z-index:25; display:flex; flex-direction:column; gap:10px; align-items:center;
+}
+.dot{
+  all:unset; cursor:pointer; width:11px; height:11px; border-radius:50%;
+  border:1.6px solid var(--line); background:var(--paper); transition:.18s;
+}
+.dot[aria-current="true"]{ background:var(--accent); border-color:var(--accent); transform:scale(1.35); }
+.nav-btn{
+  all:unset; cursor:pointer; width:34px; height:34px; border-radius:50%;
+  border:1.6px solid var(--line); display:grid; place-items:center; background:var(--paper);
+  box-shadow:2px 2px 0 var(--line); transition:.12s;
+}
+.nav-btn:hover{ background:var(--ink); color:var(--paper); }
+.nav-btn:active{ transform:translate(2px,2px); box-shadow:0 0 0 var(--line); }
+.nav-btn svg{ width:15px; height:15px; }
+
+/* =========================================================
+   Bandes empilées (scroll vertical, snap)
+   ========================================================= */
+.app[data-dir="a"] .stage{ overflow-y:auto; scroll-snap-type:y proximity; }
+.app[data-dir="a"] .stage::-webkit-scrollbar{ width:0; }
+.app[data-dir="a"] .metier{
+  scroll-snap-align:start; min-height:calc(56vh * var(--density));
+  display:grid; grid-template-rows:auto 1fr; gap:calc(14px * var(--density));
+  padding:calc(30px * var(--density)) 0 calc(26px * var(--density));
+  border-bottom:1.5px dashed var(--line-soft);
+}
+.app[data-dir="a"] .metier-info{
+  display:grid; grid-template-columns:1fr; align-items:start; gap:14px;
+  padding:0 30px 6px 100px;
+}
+.app[data-dir="a"] .metier-head{ display:flex; flex-direction:column; gap:8px; }
+.app[data-dir="a"] .metier-title{ font-size:clamp(30px,4vw,56px); }
+.app[data-dir="a"] .metier-tagline{ font-size:24px; color:var(--accent); }
+.app[data-dir="a"] .metier-side{ display:flex; flex-direction:column; gap:12px; align-items:flex-start; max-width:760px; }
+.app[data-dir="a"] .metier-meta{ justify-content:flex-start; max-width:none; flex-wrap:nowrap; }
+.app[data-dir="a"] .metier-meta li{ white-space:nowrap; }
+.app[data-dir="a"] .card{ width:clamp(190px,21vw,300px); transition:width .42s cubic-bezier(.2,.8,.2,1); }
+.app[data-dir="a"] .marquee{ height:calc(100% - 0px); transition:height .42s cubic-bezier(.2,.8,.2,1); }
+.app[data-dir="a"] .card .thumb-wrap{ height:clamp(150px,20vh,230px); transition:height .42s cubic-bezier(.2,.8,.2,1), box-shadow .35s; }
+.app[data-dir="a"] .track{ transition:padding .42s cubic-bezier(.2,.8,.2,1); }
+
+/* UX/UI : texte compact */
+.metier[data-metier="ux"] .metier-side p,
+.metier[data-metier="ux"] .metier-side li{ font-size:14px; }
+
+/* ---------- état OUVERT : projet inline dans la ligne métier ---------- */
+.metier-detail{ display:none; }
+
+.app[data-dir="a"] .metier.is-open{
+  --proj-top:44px;
+  grid-template-rows:auto auto auto;
+  scroll-snap-align:start;
+}
+.app[data-dir="a"] .metier.is-open .metier-info{
+  grid-template-columns:auto auto 1fr; align-items:baseline; gap:6px 16px;
+  padding:0 30px 2px 100px;
+}
+.app[data-dir="a"] .metier.is-open .metier-side{ display:none; }
+.app[data-dir="a"] .metier.is-open .metier-head{ flex-direction:row; align-items:baseline; gap:14px; flex-wrap:wrap; }
+.app[data-dir="a"] .metier.is-open .metier-num{ align-self:center; }
+.app[data-dir="a"] .metier.is-open .metier-title{ font-size:clamp(20px,2.2vw,30px); }
+.app[data-dir="a"] .metier.is-open .metier-tagline{ font-size:clamp(16px,1.5vw,20px); }
+/* étape 1 : vignettes réduites proportionnellement */
+.app[data-dir="a"] .metier.is-open .marquee{ height:clamp(86px,12vh,132px); }
+.app[data-dir="a"] .metier.is-open .card{ width:clamp(78px,8.5vw,120px); }
+.app[data-dir="a"] .metier.is-open .card .thumb-wrap{
+  height:clamp(58px,8vh,92px);
+  box-shadow:0 3px 7px rgba(10,9,7,.10), inset 0 0 0 1px rgba(255,255,255,.04);
+}
+.app[data-dir="a"] .metier.is-open .card .cap{
+  opacity:0; max-height:0; overflow:hidden; transition:opacity .25s, max-height .25s;
+}
+.app[data-dir="a"] .metier.is-open .track{ padding:12px 26px 16px; gap:12px; }
+
+/* étape 2 : projet en grand format, sans cadre ni fond */
+.app[data-dir="a"] .metier.is-open .metier-detail{
+  position:relative; display:block; min-height:0; overflow:hidden;
+  margin:8px 30px calc(var(--proj-top) * 2);
+  opacity:0; transform:translateY(26px); transition:opacity .5s, transform .5s;
+}
+.md-strip{
+  display:flex; gap:24px; height:100%; align-items:stretch;
+  cursor:grab; touch-action:pan-y; will-change:transform;
+}
+.metier-detail[data-drag="1"] .md-strip{ cursor:grabbing; }
+.metier-detail[data-drag="1"] .md-slide{ pointer-events:none; }
+.md-slide{ flex:0 0 87%; min-width:0; position:relative; height:100%; }
+.md-front{ display:grid; grid-template-columns:1.45fr 1fr; height:100%; min-height:0; }
+.app[data-dir="a"] .metier.is-detail .metier-detail{ opacity:1; transform:none; }
+.app.detail-open .hud{ opacity:0; pointer-events:none; transition:opacity .3s; }
+
+/* fermeture décomposée — étape ① compression vers le haut */
+.app[data-dir="a"] .metier.is-closing .metier-detail{
+  opacity:0; transform:scaleY(0); transform-origin:top center;
+  transition:transform .4s cubic-bezier(.6,.02,.82,.14), opacity .3s ease;
+}
+
+/* bureau : visuel 16:9 à gauche, infos à droite */
+.md-figure{
+  position:relative; padding:30px 30px 20px 0; min-height:0;
+  display:flex; align-items:flex-start; justify-content:center;
+}
+.md-hero{
+  position:relative; aspect-ratio:16/9;
+  width:min(100%, calc(64vh * 16 / 9)); height:auto;
+}
+.md-hero image-slot{ width:100%; height:100%; }
+
+/* slider du visuel principal */
+.md-hview{ overflow:hidden; width:100%; height:100%; border-radius:8px; }
+.md-htrack{ display:flex; height:100%; will-change:transform; }
+.md-hslide{ flex:0 0 100%; min-width:0; }
+.md-hslide image-slot{ display:block; width:100%; height:100%; }
+/* flèches circulaires filaires */
+.md-harrow{
+  all:unset; position:absolute; top:50%; transform:translateY(-50%); z-index:5;
+  width:38px; height:38px; border-radius:50%; cursor:pointer;
+  display:grid; place-items:center;
+  background:transparent; border:1.5px solid var(--line-soft); color:var(--muted);
+  transition:border-color .14s, color .14s;
+}
+.md-harrow:hover{ border-color:var(--muted); color:var(--ink); }
+.md-harrow svg{ width:15px; height:15px; }
+.md-hprev{ left:10px; }
+.md-hnext{ right:10px; }
+/* pouces pagination, sans cadre */
+.md-hdots{
+  position:absolute; left:50%; bottom:12px; transform:translateX(-50%); z-index:5;
+  display:flex; gap:6px;
+}
+.md-hdots .dot{ width:8px; height:8px; }
+
+.md-meta{
+  padding:30px 40px 30px 40px; display:flex; flex-direction:column;
+  gap:14px; overflow:auto; min-height:0;
+}
+.md-meta .pclient{ font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--muted); margin:0; }
+.md-meta .ptitle{
+  font-family:var(--title-font); font-weight:600; font-size:clamp(28px,3.2vw,44px);
+  line-height:1; margin:0; letter-spacing:-.02em;
+}
+.md-meta .psub{ font-size:18px; color:var(--accent); margin:0; font-family:var(--hand); }
+.md-meta .pdesc{ font-size:16px; line-height:1.6; color:var(--ink); margin:0; max-width:46ch; }
+/* deux visuels 4:3 côte à côte sous le descriptif */
+.md-duo{ display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; margin-top:4px; }
+.md-duo image-slot{ display:block; width:100%; min-width:0; aspect-ratio:4/3; }
+
+/* =========================================================
+   RESPONSIVE — Tablette (≤1024) & Mobile (≤640)
+   ========================================================= */
+
+@media (max-width:1024px){
+  .topbar{ padding:12px 18px; gap:12px; }
+
+  .app[data-dir="a"] .metier-info{ grid-template-columns:1fr; gap:14px; padding:0 22px 4px 100px; }
+  .app[data-dir="a"] .metier-side{ max-width:none; }
+  .app[data-dir="a"] .metier-meta{ justify-content:flex-start; max-width:none; flex-wrap:wrap; }
+
+  /* détail ouvert : empilé, visuel 16:9 pleine largeur */
+  .md-front{ grid-template-columns:1fr; grid-template-rows:auto auto; height:auto; overflow:visible; }
+  .md-front .md-figure{ order:0; }
+  .md-front .md-meta{ order:1; }
+  .md-strip{ height:auto; align-items:flex-start; }
+  .md-slide{ height:auto; }
+  .md-hero{ aspect-ratio:16/9; width:100%; height:auto; max-width:none; max-height:none; margin:0; }
+  .app[data-dir="a"] .metier.is-open .md-figure{ padding:0 6px 14px; }
+  .app[data-dir="a"] .metier.is-open .md-meta{ padding:16px 6px 20px; overflow:visible; }
+}
+
+@media (max-width:640px){
+  body{ font-size:15px; }
+  .topbar{ padding:8px 12px; gap:8px; column-gap:8px; }
+  :root{ --topbar-h:88px; }
+  .logo-img{ width:256px; height:72px; }
+  .p-role{ font-size:11px; }
+  .p-loc{ display:none; }
+  .p-contact{ gap:10px; }
+  .p-contact a{ font-size:10px; letter-spacing:.08em; }
+
+  /* HUD en bas, horizontal */
+  .hud{
+    right:auto; left:50%; top:auto; bottom:14px; transform:translateX(-50%);
+    flex-direction:row; gap:8px; background:var(--paper); padding:6px 10px;
+    border:1.4px solid var(--line); border-radius:999px; box-shadow:2px 2px 0 var(--line);
+  }
+  .nav-btn{ width:30px; height:30px; }
+
+  /* métier compact */
+  .app[data-dir="a"] .metier{ min-height:auto; padding:24px 0 22px; gap:14px; }
+  .app[data-dir="a"] .metier-info{ padding:0 16px 0 50px; }
+  .app[data-dir="a"] .metier-title{ font-size:clamp(28px,9vw,40px); }
+  .app[data-dir="a"] .metier-tagline{ font-size:20px; }
+  .app[data-dir="a"] .track{ padding:26px 16px 36px; }
+  .app[data-dir="a"] .card{ width:clamp(150px,62vw,220px); }
+  .app[data-dir="a"] .card .thumb-wrap{ height:clamp(120px,34vw,170px); }
+
+  /* détail ouvert mobile */
+  .app[data-dir="a"] .metier.is-open .metier-detail{ margin:8px 0 0; }
+  .app[data-dir="a"] .metier.is-open .md-meta{ overflow:visible; }
+  .md-hero{ aspect-ratio:4/3; height:30vh; width:auto; max-width:92%; max-height:none; margin:0 auto; }
+  .app[data-dir="a"] .metier.is-open .md-figure{ padding:0 0 12px; }
+  .app[data-dir="a"] .metier.is-open .md-meta{ padding:16px 4% 20px; }
+  .app[data-dir="a"] .metier.is-open .metier-info{ padding:0 16px 0 50px; }
+  .app[data-dir="a"] .metier.is-open .track{ padding:10px 16px 14px; }
+  .md-meta .pclient{ font-size:10px; }
+  .md-meta .ptitle{ font-size:24px; }
+  .md-meta .psub{ font-size:15px; }
+  .md-meta .pdesc{ font-size:13.5px; line-height:1.55; }
+}
