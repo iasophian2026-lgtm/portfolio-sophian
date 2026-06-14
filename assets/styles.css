@@ -383,9 +383,12 @@ image-slot{ --is-bg:var(--paper-2); }
   .p-contact{ gap:10px; }
   .p-contact a{ font-size:10px; letter-spacing:.08em; }
 
-  /* HUD en bas, horizontal */
+  /* HUD en bas, horizontal — ancré à l'écran visible (évite les sauts liés à la barre d'adresse mobile) */
   .hud{
-    right:auto; left:50%; top:auto; bottom:14px; transform:translateX(-50%);
+    position:fixed;
+    right:auto; left:50%; top:auto;
+    bottom:calc(14px + env(safe-area-inset-bottom));
+    transform:translateX(-50%);
     flex-direction:row; gap:8px; background:var(--paper); padding:6px 10px;
     border:1.4px solid var(--line); border-radius:999px; box-shadow:2px 2px 0 var(--line);
   }
